@@ -16,8 +16,6 @@ class RNN(object):
 		'''
 		initialize the RNN with random weight matrices.
 
-		DO NOT CHANGE THIS
-
 		vocab_size		size of vocabulary that is being used
 		hidden_dims		number of hidden units
 		'''
@@ -37,8 +35,6 @@ class RNN(object):
 	def apply_deltas(self, learning_rate):
 		'''
 		update the RNN's weight matrices with corrections accumulated over some training instances
-
-		DO NOT CHANGE THIS
 
 		learning_rate	scaling factor for update weights
 		'''
@@ -75,7 +71,7 @@ class RNN(object):
 			X = make_onehot(x[t],self.vocab_size)
 			s[t]=sigmoid(np.dot(self.V,X)+np.dot(self.U,s[t-1]))
 			y[t]=softmax(np.dot(self.W,s[t]))
-			
+
 		return y,s
 
 
@@ -105,7 +101,6 @@ class RNN(object):
 			self.deltaV += np.outer(d_in,X)
 			self.deltaU += np.outer(d_in,s[t-1])
 
-			
 	def acc_deltas_bptt(self, x, d, y, s, steps):
 		'''
 		accumulate updates for V, W, U
@@ -138,7 +133,8 @@ class RNN(object):
 					self.deltaU += np.outer(d_in,s[t-tr-1])	
 					self.deltaV += np.outer(d_in,X)	
 				
-				
+
+
 	def compute_loss(self, x, d):
 		'''
 		compute the loss between predictions y for x, and desired output d.
@@ -159,7 +155,6 @@ class RNN(object):
 			
 		return loss
 
-		
 	def compute_mean_loss(self, X, D):
 		'''
 		compute the mean loss between predictions for corpus X and desired outputs in corpus D.
@@ -179,16 +174,12 @@ class RNN(object):
 		mean_loss = mean_loss/nof_words
 		return mean_loss
 
-		
 	def generate_sequence(self, start, end, maxLength,index=None):
 		'''
 		generate a new sequence, using the RNN
 
 		starting from the word-index for a start symbol, generate some output until the word-index of an end symbol is generated, or the sequence
 		exceed maxLength
-
-		HINT: make use of the "multinomial_sample" method in rnnmath.py !!!
-
 		start		word index of start symbol (the symbol <s> in a vocabulary)
 		end			word index of end symbol (the symbol </s> in a vocabulary)
 		maxLength	maximum length of the generated sequence
@@ -212,7 +203,14 @@ class RNN(object):
 			loss +=np.sum(-D*np.log(y[-1]),axis=0)
 			if d==end:
 				break
+		#if sequence[-1]!=end:
+		#	y=(self.predict(sequence))[0]
+		#	D = make_onehot(end,self.vocab_size)
+		#	loss +=np.sum(-D*np.log(y[-1]),axis=0)
+		#	sequence.append(end)
+
 		loss=loss/(len(sequence)-1)
+		print("loss",loss)
 		return sequence,loss
 
 	def train(self, X, D, X_dev, D_dev, epochs=10, learning_rate=0.5, anneal=5, back_steps=0, batch_size=100, min_change=0.0001, log=True):
