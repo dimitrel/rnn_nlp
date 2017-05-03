@@ -1,1 +1,1 @@
-# rnn_nlp
+# Language Modelling with Recurrent Neural Networks
