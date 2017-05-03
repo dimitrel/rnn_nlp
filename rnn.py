@@ -10,17 +10,6 @@ import time
 class RNN(object):
 	'''
 	This class implements Recurrent Neural Networks.
-
-	You should implement code in the following functions:
-		predict				->	predict an output sequence for a given input sequence
-		acc_deltas			->	accumulate update weights for the RNNs weight matrices, standard Back Propagation
-		acc_deltas_bptt		->	accumulate update weights for the RNNs weight matrices, using Back Propagation Through Time
-		compute_loss 		->	compute the (cross entropy) loss between the desired output and predicted output for a given input sequence
-		compute_mean_loss	->	compute the average loss over all sequences in a corpus
-		generate_sequence	->	use the RNN to generate a new (unseen) sequnce
-
-	Do NOT modify any other methods!
-	Do NOT change any method signatures!
 	'''
 
 	def __init__(self, vocab_size, hidden_dims):
@@ -86,11 +75,7 @@ class RNN(object):
 			X = make_onehot(x[t],self.vocab_size)
 			s[t]=sigmoid(np.dot(self.V,X)+np.dot(self.U,s[t-1]))
 			y[t]=softmax(np.dot(self.W,s[t]))
-
-			##########################
 			
-
-		
 		return y,s
 
 
@@ -120,8 +105,7 @@ class RNN(object):
 			self.deltaV += np.outer(d_in,X)
 			self.deltaU += np.outer(d_in,s[t-1])
 
-
-
+			
 	def acc_deltas_bptt(self, x, d, y, s, steps):
 		'''
 		accumulate updates for V, W, U
@@ -154,8 +138,7 @@ class RNN(object):
 					self.deltaU += np.outer(d_in,s[t-tr-1])	
 					self.deltaV += np.outer(d_in,X)	
 				
-
-
+				
 	def compute_loss(self, x, d):
 		'''
 		compute the loss between predictions y for x, and desired output d.
@@ -176,6 +159,7 @@ class RNN(object):
 			
 		return loss
 
+		
 	def compute_mean_loss(self, X, D):
 		'''
 		compute the mean loss between predictions for corpus X and desired outputs in corpus D.
@@ -195,6 +179,7 @@ class RNN(object):
 		mean_loss = mean_loss/nof_words
 		return mean_loss
 
+		
 	def generate_sequence(self, start, end, maxLength,index=None):
 		'''
 		generate a new sequence, using the RNN
@@ -227,21 +212,12 @@ class RNN(object):
 			loss +=np.sum(-D*np.log(y[-1]),axis=0)
 			if d==end:
 				break
-		#if sequence[-1]!=end:
-		#	y=(self.predict(sequence))[0]
-		#	D = make_onehot(end,self.vocab_size)
-		#	loss +=np.sum(-D*np.log(y[-1]),axis=0)
-		#	sequence.append(end)
-
 		loss=loss/(len(sequence)-1)
-		print("loss",loss)
 		return sequence,loss
 
 	def train(self, X, D, X_dev, D_dev, epochs=10, learning_rate=0.5, anneal=5, back_steps=0, batch_size=100, min_change=0.0001, log=True):
 		'''
 		train the RNN on some training set X, D while optimizing the loss on a dev set X_dev, D_dev
-
-		DO NOT CHANGE THIS
 
 		training stops after the first of the following is true:
 			* number of epochs reached
